@@ -16,7 +16,7 @@ function DisplayWeather({ latlng, capitalName }) {
       <div>
         <h2>Weather in {capitalName}</h2>
         <li>Temperature {weather.main.temp} farenheit</li>
-        <img src={weather.weather[0].icon} />
+        <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} />
         <li>wind {weather.wind.speed} mph</li>
       </div>
     )
