@@ -9,13 +9,15 @@ function DisplayWeather({ latlng, capitalName }) {
       .then(data => setWeather(data))
   }, [latlng])
 
-  if (weather !== null) {
+  console.log(weather)
+
+  if (weather) {
     return (
       <div>
         <h2>Weather in {capitalName}</h2>
-        <li>Temperature {weather.current.temp}</li>
-        <img src={weather.current.weather.icon} />
-        <li>wind {weather.current.wind_speed}</li>
+        <li>Temperature {weather.main.temp} farenheit</li>
+        <img src={weather.weather[0].icon} />
+        <li>wind {weather.wind.speed} mph</li>
       </div>
     )
   }

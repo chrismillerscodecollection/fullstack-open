@@ -24,8 +24,6 @@ function CountryList({ countries, searchTerm }) {
         <h1>{country.name.common}</h1>
         <li>{country.capital}</li>
         <li>Area {country.area}</li>
-        <li>Lattitude {country.latlng[0]}</li>
-        <li>Longitude {country.latlng[1]}</li>
 
         <h2>Languages</h2>
         <ul>
