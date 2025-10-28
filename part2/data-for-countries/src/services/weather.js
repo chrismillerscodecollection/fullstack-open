@@ -1,11 +1,13 @@
 import axios from 'axios'
 
-export function getWeatherByLocation(lat, lon) {
-  const api_key = import.meta.env.OPEN_WEATHER_API_KEY;
+export function getWeatherByLocation(latlng) {
+  const api_key = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
+  const baseUrl = 'https://api.openweathermap.org/data/2.5/weather'
+  const units = 'metric'
 
   return (
     axios
-      .get(`?lat=${lat}&lon=${lon}&appid=${api_key}`)
+      .get(`${baseUrl}?lat=${latlng[0]}&lon=${latlng[1]}&appid=${api_key}&units=${units}`)
       .then(response => {
         return (response.data);
       })

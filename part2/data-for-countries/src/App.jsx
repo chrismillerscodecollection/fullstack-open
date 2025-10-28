@@ -7,11 +7,9 @@ function App() {
   const [countries, setCountries] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   
-  const baseUrl = "https://studies.cs.helsinki.fi/restcountries/"
-  
   useEffect(() => 
     {
-      getAllCountries(baseUrl).then(data => setCountries(data))
+      getAllCountries().then(data => setCountries(data))
     }, [])
 
   return (

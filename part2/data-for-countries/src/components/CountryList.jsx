@@ -1,6 +1,11 @@
 import DisplayWeather from './DisplayWeather.jsx'
+import DisplayCountryButton from './DisplayCountryButton.jsx'
 
-function CountryList({ countries, searchTerm }) {
+function CountryList({ countries, searchTerm, setSearchTerm }) {
+
+  const handleShowCountry = (countryName) =>  {
+    return (setSearchTerm(countryName.toLowerCase()))
+  }
 
   let filteredCountries = countries
     .filter((country) =>
@@ -35,7 +40,7 @@ function CountryList({ countries, searchTerm }) {
         </ul>
 
         <img src={country.flags.png} alt={country.flags.alt} />
-        <DisplayWeather lat={country.lat} lon={country.lon} capitalName={country.capital} />
+        <DisplayWeather latlng={country.latlng} capitalName={country.capital} />
       </div>
     )
   }
@@ -44,10 +49,11 @@ function CountryList({ countries, searchTerm }) {
     return (
       <ul>
         {filteredCountries
-          .map((country) => (
-            <li key={country.name.common}>
-              {country.name.common}
-            </li>))}
+          .map((country) =>
+          (<li key={country.name.common}>{country.name.common}
+            <DisplayCountryButton countryName={country.name.common}
+              handleShowCountry={handleShowCountry} /></li>
+          ))}
       </ul>
     )
   }

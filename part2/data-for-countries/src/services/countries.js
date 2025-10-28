@@ -1,19 +1,22 @@
 import axios from 'axios'
 
-export function getAllCountries(url) {
+const baseUrl = 'https://studies.cs.helsinki.fi/restcountries/'
+
+export function getAllCountries() {
+
   return(
     axios
-      .get(`${url}api/all`)
+      .get(`${baseUrl}api/all`)
       .then(response => {
         return (response.data)
       })
       .catch(error => console.error(error)));
 }
 
-export function getCountryByName(url, name) {
+export function getCountryByName(name) {
   return (
     axios
-      .get(`${url}/name/${name}`)
+      .get(`${baseUrl}/name/${name}`)
       .then(response => {
         return (response.data);
       })
