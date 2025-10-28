@@ -7,7 +7,7 @@ function DisplayCountryInfo({ countries, searchTerm, setSearchTerm }) {
       <form>
         <label htmlFor="search-input">find countries </label>
         <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <CountryList countries={countries} searchTerm={searchTerm}/>
+        <CountryList countries={countries} searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
       </form>
     </div>
   )

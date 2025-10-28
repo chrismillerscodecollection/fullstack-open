@@ -3,7 +3,7 @@ import axios from 'axios'
 export function getWeatherByLocation(latlng) {
   const api_key = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
   const baseUrl = 'https://api.openweathermap.org/data/2.5/weather'
-  const units = 'imperial'
+  const units = 'metric'
 
   return (
     axios
