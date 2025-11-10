@@ -1,7 +1,7 @@
 {
-  "name": "part3-phonebook-backend",
-  "version": "0.0.1",
-  "description": "",
+  "name": "phonebook",
+  "version": "1.0.0",
+  "description": "Part 3 - Phonebook",
   "license": "MIT",
   "author": "Christopher Miller",
   "type": "commonjs",
