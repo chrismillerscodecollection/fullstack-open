@@ -1,9 +1,17 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+app.use(express.static('dist'))
 
-let persons = [
+morgan.token('request-body', function (request, response) {
+  return JSON.stringify(request.body)
+})
+
+app.post('/{*all}', morgan(':method :url :status :response-time ms :request-body'))
+
+const persons = [
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -23,22 +31,34 @@ let persons = [
       "id": "4",
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
+    },
+    {
+      "id": "158436111",
+      "name": "Christopher Miller",
+      "number": "23-54-345456"
     }
 ]
 
+
+
 function generateId() {
-  return Math.floor(Math.random() * 1000000000) + 1
+  return String(Math.floor(Math.random() * 1000000000) + 1)
 }
 
-function checkNewUser(newPerson) {
+function checkPersonInfo(newPerson) {
+   if (persons.find(person => person.name === newPerson.name)) {
+    const e =  Error('must be unique')
+    return e
+  }
+
   if (newPerson.name === '' || newPerson.number === '') {
-    new Error('{error: missing name or number}')
+    const e =  Error('missing name or number')
+    return e
   }
-  
-  if (persons.find(person => person.name === newPerson.name)) {
-    new Error('{error: must be unique')
-  }
-}
+
+  return null
+}  
+ 
 
 app.get('/info', (_request, response) => {
   const multilineResponse = `
@@ -67,20 +87,21 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
-app.post('/api/persons/:name/:number', (request, response) => {
-  const id = generateId()
-  const name = request.params.name
-  const number = request.params.number
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+  
   const newPerson = {
-    'id': id,
-    'name': name,
-    'number': number
+    'id': generateId().toString(),
+    'name': body.name,
+    'number': body.number
   }
 
-  if (checkNewUser(newPerson)) {
-    response.status(500).end()
+  e = checkPersonInfo(newPerson)
+
+  if (e !== null) {
+    response.status(400).json({error: `${e.message}`})
   } else {
-    persons.push(newPerson)
+    persons.concat(newPerson)
     response.json(newPerson)
   }
 })
@@ -106,7 +127,7 @@ app.get('/api/info', (_request, response) => {
 })
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
