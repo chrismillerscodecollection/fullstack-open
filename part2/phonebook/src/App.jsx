@@ -14,7 +14,7 @@ const App = () => {
   const [filter, setFilter] = useState('')
   const [notification, setNotification] = useState({ message: null, type: null})
 
-
+  
   useEffect(() => {
     personsService
       .getAll()

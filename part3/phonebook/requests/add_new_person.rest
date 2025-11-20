@@ -1,0 +1,17 @@
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+  "name": "Christopher Franklin",
+  "number": "321-251-0067"
+}
+
+###
+
+POST https://phonebook-silent-sound-6473.fly.dev/api/persons/
+content-type: application/json
+
+{
+  "name": "Christopher Franklin",
+  "number": "321-251-0067"
+}
