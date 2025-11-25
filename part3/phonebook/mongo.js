@@ -1,18 +1,19 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
 
-console.log("arg length ", process.argv.length)
+
 const connectionString = process.env.MONGO_DB_URI
-console.log("Connection string....", connectionString)
-console.log("Connect to MongoDB processing starting...")
 
 async function connectDB(url) {
   try {
+    console.log("Connecting to MongoDB...")
     const connection = await mongoose.connect(url, { family: 4 })
     return connection
   } catch (err) {
     console.error(err.message)
     process.exit(1)
+  } finally {
+    console.log("Connected to MongoDB...")
   }
 }
 
@@ -24,7 +25,7 @@ const listingSchema = new mongoose.Schema({
   number: String,
 })
 
-console.log("Setting new mongoose.model called 'Listing' that uses 'listingSchema'")
+console.log("Setting new mongoose.model called 'Listing' that implements 'listingSchema'")
 const Listing = mongoose.model('Listing', listingSchema)
 
 async function createListing(listingName, listingNumber) {
