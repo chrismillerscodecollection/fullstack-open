@@ -15,17 +15,6 @@ async function connectDB(url) {
   }
 }
 
-//await connectDB(connectionString)
-
-//console.log("Setting a new schema called 'listingSchema'")
-const listingSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-//console.log("Setting new mongoose.model called 'Listing' that implements 'listingSchema'")
-const Listing = mongoose.model('Listing', listingSchema)
-
 async function showListings() {
   try {
     const result = await Listing.find({})
@@ -48,43 +37,4 @@ async function createListing(listingName, listingNumber) {
   return await newListing.save()
 }
 
-
-
-
-// if (process.argv.length === 3) {
-//   try {
-//     const result = await Listing.find({})
-//     console.log("Connected to MongoDB...")
-//     console.log("Found the following listings in the phonebook...")
-//     result.forEach(listing => {
-//       console.log(`${listing.name} ${listing.number}`)
-//     })
-//   } catch (err) {
-//     console.error(err)
-//   } finally {
-//     mongoose.connection.close()
-//   }
-
-
-// } else if (process.argv.length === 5) {
-//   // Run using "node mongo.js {collectionName} {name} {number}"
-//   const name = process.argv[3]
-//   const number = process.argv[4]
-
-//   try {
-//     const result = await createListing(name, number)
-//     console.log('New listing saved...')
-//     console.log(`id: ${result.id}`)
-//     console.log(`name: ${result.name}`)
-//     console.log(`number: ${result.number}`)
-//   } catch (err) {
-//     console.error(err)
-//   } finally {
-//     mongoose.connection.close()
-//   }
-
-// } else {
-//   process.exit(1)
-// }
-
-export { connectDB, showListings, createListing}
+export { connectDB, showListings, createListing }
