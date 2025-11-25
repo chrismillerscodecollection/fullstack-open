@@ -1,50 +1,72 @@
-const mongoose = require('mongoose')
+import 'dotenv/config'
+import mongoose from 'mongoose'
 
-// Provide password and collectionName as arguments to continue the process
-if (process.argv.length < 3) {
-  console.log('give password as argument')
-  process.exit(1)
+console.log("arg length ", process.argv.length)
+const connectionString = process.env.MONGO_DB_URI
+console.log("Connection string....", connectionString)
+console.log("Connect to MongoDB processing starting...")
+
+async function connectDB(url) {
+  try {
+    const connection = await mongoose.connect(url, { family: 4 })
+    return connection
+  } catch (err) {
+    console.error(err.message)
+    process.exit(1)
+  }
 }
 
-const password = process.argv[2]
-const url = `mongodb+srv://cm_dev:${password}@cluster0.cmikiy1.mongodb.net/phonebook?appName=Cluster0`
+await connectDB(connectionString)
 
-mongoose.set('strictQuery', false)
-mongoose.connect(url, { family: 4 })
-
+console.log("Setting a new schema called 'listingSchema'")
 const listingSchema = new mongoose.Schema({
   name: String,
   number: String,
 })
 
+console.log("Setting new mongoose.model called 'Listing' that uses 'listingSchema'")
 const Listing = mongoose.model('Listing', listingSchema)
 
+async function createListing(listingName, listingNumber) {
+  const newListing = new Listing({
+    "name": `${listingName}`,
+    "number": `${listingNumber}`
+  })
+  return await newListing.save()
+}
+
 if (process.argv.length === 3) {
-  Listing.find({}).then(
-    result => {
-      console.log("phonebook: ")
-      result.forEach(listing => {
-        console.log(`${listing.name} ${listing.number}`)
-      })
-  if (mongoose.connection) {
+  try {
+    const result = await Listing.find({})
+    console.log("Connected to MongoDB...")
+    console.log("Found the following listings in the phonebook...")
+    result.forEach(listing => {
+      console.log(`${listing.name} ${listing.number}`)
+    })
+  } catch (err) {
+    console.error(err)
+  } finally {
     mongoose.connection.close()
   }
-})
 
-} else if (process.argv.length === 4) {
-  // Run using "node mongo.js {password} {collectionName}"
+
+} else if (process.argv.length === 5) {
+  // Run using "node mongo.js {collectionName} {name} {number}"
   const name = process.argv[3]
   const number = process.argv[4]
 
-  const newListing = new Listing({
-    "name": `${name}`,
-    "number": `${number}`
-  })
-
-  newListing.save().then(_result => {
-    console.log('listing saved!')
-  })
-  if (mongoose.connection) {
+  try {
+    const result = await createListing(name, number)
+    console.log('New listing saved...')
+    console.log(`id: ${result.id}`)
+    console.log(`name: ${result.name}`)
+    console.log(`number: ${result.number}`)
+  } catch (err) {
+    console.error(err)
+  } finally {
     mongoose.connection.close()
-  } 
+  }
+
+} else {
+  process.exit(1)
 }

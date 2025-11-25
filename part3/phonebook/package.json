@@ -4,7 +4,7 @@
   "description": "Part 3 - Phonebook",
   "license": "MIT",
   "author": "Christopher Miller",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
