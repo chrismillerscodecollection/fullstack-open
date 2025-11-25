@@ -1,15 +1,9 @@
-
-// require('dotenv').config()
-// const express = require('express')
-// const morgan = require('morgan')
-// const app = express()
-// const mongoose = require('mongoose')
-// const Listing = require('./model/Listing.js')
 import 'dotenv/config'
 import express from 'express'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
-import Listing from './model/Listing.js'
+import Listing from './model/Listing'
+import { connectDB, showListings, createListing } from './mongo'
 
 const app = express()
 
