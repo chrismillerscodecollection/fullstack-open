@@ -1,14 +1,13 @@
 import 'dotenv/config'
 import express from 'express'
 import morgan from 'morgan'
-import mongoose from 'mongoose'
-import Listing from './model/Listing'
-import { connectDB, showListings, createListing } from './mongo'
+import { Listing } from './model/listing.js'
+import { connectDB, showListings, createListing } from './mongo.js'
 
 const app = express()
 
 app.use(express.json())
-// app.use(express.static('dist'))
+app.use(express.static('dist'))
 
 morgan.token('request-body', function (request, response) {
   return JSON.stringify(request.body)
@@ -16,27 +15,24 @@ morgan.token('request-body', function (request, response) {
 
 app.use('/{*all}', morgan(':method :url :status :response-time ms :request-body'))
 
+const url = process.env.MONGO_DB_URI
+
 // Connect to MongoDB using mongoose
 try {
-  mongoose.connect(process.env.MONGO_DB_URI)
-  console.log("Successfully Connected to MongoDB")
-} catch (error) {
-  console.log("Failed to connect to MongoDB due to ", error)
-}
-
-function generateId() {
-  return String(Math.floor(Math.random() * 1000000000) + 1)
+  await connectDB(url)
+} catch (err) {
+  console.error("Failed to connect to MongoDB due to ", err)
 }
 
 function checkPersonInfo(newPerson) {
-   if (persons.find(person => person.name === newPerson.name)) {
-    const e =  Error('must be unique')
-    return e
+  const persons = showListings()
+  
+  if (persons.find(person => person.name === newPerson.name)) {
+    return Error('must be unique')
   }
 
   if (newPerson.name === '' || newPerson.number === '') {
-    const e =  Error('missing name or number')
-    return e
+    return Error('missing name or number')
   }
 
   return null
@@ -44,7 +40,7 @@ function checkPersonInfo(newPerson) {
  
 
 app.get('/api/persons', async (_request, response) => {
-  const peopleFound = await Listing.find({})
+  const peopleFound = await showListings()
   console.log(peopleFound)
   
   if (peopleFound) {
@@ -71,7 +67,6 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
   
   const newPerson = {
-    'id': generateId().toString(),
     'name': body.name,
     'number': body.number
   }
@@ -81,7 +76,7 @@ app.post('/api/persons', (request, response) => {
   if (e !== null) {
     response.status(400).json({error: `${e.message}`})
   } else {
-    persons.concat(newPerson)
+    createListing(newPerson.name, newPerson.number)
     response.json(newPerson)
   }
 })

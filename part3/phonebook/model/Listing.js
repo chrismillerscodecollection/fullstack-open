@@ -1,13 +1,12 @@
-import Schema from 'mongoose'
+import mongoose from 'mongoose'
 
-const listingSchema = new Schema({
+const listingSchema = new mongoose.Schema({
   id: String,
   name: String,
-  number: Number
+  number: String,
 }, {
   timestamps: true
 })
 
-const Listing = mongoose.model('Listing', listingSchema)
+export const Listing = mongoose.model('Listing', listingSchema)
 
-export { Listing }
