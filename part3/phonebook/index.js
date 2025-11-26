@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import express from 'express'
 import morgan from 'morgan'
+import express-as
 import { Person } from './models/Person.js'
-import { connectDB, showPersons, createPerson, deletePersonById } from './mongo.js'
+import { showPersons, createPerson, deletePersonById } from './mongo.js'
 
 const app = express()
 
@@ -18,7 +19,15 @@ app.use('/{*all}', morgan(':method :url :status :response-time ms :request-body'
 const url = process.env.MONGO_DB_URI
 
 // Connect to MongoDB using mongoose
-await connectDB(url)
+try {
+  console.log('Connecting to MongoDB...')
+  await mongoose.connect(url, { family: 4 })
+  } catch (err) {
+    console.error(err.message)
+    process.exit(1)
+  } finally {
+    console.log('Connected to MongoDB...')
+  }
 
 async function checkPersonInfo(newPerson) {
   const persons = await showPersons()
