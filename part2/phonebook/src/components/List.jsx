@@ -8,7 +8,7 @@ export const List = ({ persons, filter, handleDeletePerson }) => {
           .filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
           .map((person) => (
             <p key={person.id}>
-              {person.name} : {person.number} <Delete personId={person.id} handleDeletePerson={handleDeletePerson}/>
+              {person.name} : {person.number} <Delete personId={person._id} handleDeletePerson={handleDeletePerson}/>
             </p>
           ))}
       </div>

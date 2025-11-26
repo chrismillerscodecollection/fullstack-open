@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import { Listing } from './model/listing.js'
+import { Person } from './models/Person.js'
 
 export async function connectDB(url) {
   try {
@@ -15,24 +15,37 @@ export async function connectDB(url) {
   }
 }
 
-export async function showListings() {
+export async function showPersons() {
   try {
-    const result = await Listing.find({})
+    const result = await Person.find({})
 
-    result.forEach(listing => {
-      console.log(listing)
+    result.forEach(person => {
+      console.log(person)
     })
+    return result
   } catch (err) {
     console.error(err)
-  } finally {
-    mongoose.connection.close()
   }
 }
 
-export async function createListing(listingName, listingNumber) {
-  const newListing = new Listing({
-    name: listingName,
-    number: listingNumber
+export async function createPerson(personName, personNumber) {
+  const newPerson = new Person({
+    name: personName,
+    number: personNumber,
   })
-  return await newListing.save()
+  return await newPerson.save()
+}
+
+export async function deletePersonById(id) {
+  try {
+    const deletedPersonDocument = await Person.deleteOne({ _id: id })
+
+    if (deletedPersonDocument.acknowledged) {
+      console.log(`Successfully deleted ${deletedPersonDocument.deletedCount} person document`)
+      return (deletedPersonDocument)
+    }
+
+  } catch (err) {
+    console.error(err)
+  }
 }

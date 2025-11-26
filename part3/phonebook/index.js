@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import express from 'express'
 import morgan from 'morgan'
-import { Listing } from './model/listing.js'
-import { connectDB, showListings, createListing } from './mongo.js'
+import { Person } from './models/Person.js'
+import { connectDB, showPersons, createPerson, deletePersonById } from './mongo.js'
 
 const app = express()
 
@@ -18,15 +18,11 @@ app.use('/{*all}', morgan(':method :url :status :response-time ms :request-body'
 const url = process.env.MONGO_DB_URI
 
 // Connect to MongoDB using mongoose
-try {
-  await connectDB(url)
-} catch (err) {
-  console.error("Failed to connect to MongoDB due to ", err)
-}
+await connectDB(url)
 
-function checkPersonInfo(newPerson) {
-  const persons = showListings()
-  
+async function checkPersonInfo(newPerson) {
+  const persons = await showPersons()
+
   if (persons.find(person => person.name === newPerson.name)) {
     return Error('must be unique')
   }
@@ -36,15 +32,15 @@ function checkPersonInfo(newPerson) {
   }
 
   return null
-}  
- 
+}
+
 
 app.get('/api/persons', async (_request, response) => {
-  const peopleFound = await showListings()
-  console.log(peopleFound)
-  
-  if (peopleFound) {
-    response.json(peopleFound)
+  const persons = await showPersons()
+  console.log(persons)
+
+  if (persons) {
+    response.json(persons)
   } else {
     response.status(404).end()
   }
@@ -53,7 +49,7 @@ app.get('/api/persons', async (_request, response) => {
 
 app.get('/api/persons/:id', async (request, response) => {
   const id = request.params.id
-  const person = await Listing.findById(`${id}`).exec()
+  const person = await Person.findById(`${id}`).exec()
 
   if (person) {
     console.log(person)
@@ -63,33 +59,34 @@ app.get('/api/persons/:id', async (request, response) => {
   }
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response) => {
   const body = request.body
-  
+
   const newPerson = {
     'name': body.name,
     'number': body.number
   }
 
-  e = checkPersonInfo(newPerson)
+  const e = await checkPersonInfo(newPerson)
 
   if (e !== null) {
-    response.status(400).json({error: `${e.message}`})
+    response.status(400).json({ error: `${e.message}` })
   } else {
-    createListing(newPerson.name, newPerson.number)
+    createPerson(newPerson.name, newPerson.number)
     response.json(newPerson)
   }
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', async (request, response) => {
   const id = request.params.id
-  const filteredPersons = persons.filter(person => person.id !== id)
+  const deletedPersonDocument = await deletePersonById({ _id: id })
 
-  if (filteredPersons) {
+  if (deletedPersonDocument) {
     response.status(204).end()
   } else {
     response.status(404).end()
   }
+
 })
 
 

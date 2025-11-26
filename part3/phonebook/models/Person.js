@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const listingSchema = new mongoose.Schema({
+const personSchema = new mongoose.Schema({
   id: String,
   name: String,
   number: String,
@@ -8,5 +8,4 @@ const listingSchema = new mongoose.Schema({
   timestamps: true
 })
 
-export const Listing = mongoose.model('Listing', listingSchema)
-
+export const Person = mongoose.model('Person', personSchema)
