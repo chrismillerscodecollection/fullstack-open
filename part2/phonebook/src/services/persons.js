@@ -1,26 +1,26 @@
 import axios from 'axios'
 
-const baseUrl = 'api/persons'
+const baseUrl = 'api/persons';
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+  const response = await axios.get(baseUrl);
+  return response.data;
 }
 
-const addNewPerson = (newName, newNumber) => {
-  const add = axios.post(baseUrl, { name: newName, number: newNumber })
-  return add.then(response => response.data)
+const addNewPerson = async (newName, newNumber) => {
+  const response = await axios.post(baseUrl, { name: newName, number: newNumber });
+  return response.data;
 }
 
-const deletePerson = (personId) => {
-  const remove = axios.delete(`${baseUrl}/${personId}`)
-  return remove.then(response => response.data)
+const deletePerson = async (personId) => {
+  const response = await axios.delete(`${baseUrl}/${personId}`);
+  return response.data;
 }
 
 
-const updatePhoneNumber = (personId, name, newNumber) => {
-  const update = axios.put(`${baseUrl}/${personId}`, { name: name, number: newNumber, id: personId})
-  return update.then(response => response.data)
+const updatePhoneNumber = async (personId, name, newNumber) => {
+  const response = await axios.put(`${baseUrl}/${personId}`, { id: personId, name: name, number: newNumber });
+  return response.data;
 }
 
 export default {
@@ -28,4 +28,4 @@ export default {
   addNewPerson,
   deletePerson,
   updatePhoneNumber
-}
+};
