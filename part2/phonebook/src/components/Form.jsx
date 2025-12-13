@@ -7,58 +7,56 @@ export const Form = ({
   handleAddNewPerson,
   handleUpdatePhoneNumber }) => {
 
-  const handleOnSubmit = (event) => {
+  const handleOnSubmit = async (event) => {
     event.preventDefault()
 
-    const checkForMatch = (persons) => {
+    const checkForMatch = async (persons) => {
       const match = persons.find(person => person.name === name)
       const numExists = persons.find(person => person.name === name && person.number)
 
       if (match && numExists) {
         if (window.confirm("The user already has a phone number. Would you like to update it?")) {
-          handleUpdatePhoneNumber(match.id, number)
+          await handleUpdatePhoneNumber(match._id, number)
+          return
         }
-        return
-      }
-
-      if (match) {
+      } else if (match) {
         alert(`${name} is already added to the phonebook`)
         return
-      }
+      } 
 
-    handleAddNewPerson(name, number)
+      await handleAddNewPerson(name, number)
+    }
+
+    checkForMatch(persons)
   }
 
-  checkForMatch(persons)
-}
-
-return (
-  <form onSubmit={handleOnSubmit}>
-    <div>
-      name:
-      <input
-        id="name"
-        type="text"
-        autoComplete="name"
-        value={name}
-        onChange={(event) => {
-          setName(event.target.value)
-        }} />
-    </div>
-    <div>
-      number:
-      <input
-        id="number"
-        type="text"
-        autoComplete="tel"
-        value={number}
-        onChange={(event) => {
-          setNumber(event.target.value)
-        }} />
-    </div>
-    <div>
-      <button id="submit" type="submit">add</button>
-    </div>
-  </form>
-)
+  return (
+    <form onSubmit={handleOnSubmit}>
+      <div>
+        name:
+        <input
+          id="name"
+          type="text"
+          autoComplete="name"
+          value={name}
+          onChange={(event) => {
+            setName(event.target.value)
+          }} />
+      </div>
+      <div>
+        number:
+        <input
+          id="number"
+          type="text"
+          autoComplete="tel"
+          value={number}
+          onChange={(event) => {
+            setNumber(event.target.value)
+          }} />
+      </div>
+      <div>
+        <button id="submit" type="submit">add</button>
+      </div>
+    </form>
+  )
 }

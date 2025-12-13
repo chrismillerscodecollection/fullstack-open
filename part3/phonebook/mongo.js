@@ -1,50 +1,57 @@
-const mongoose = require('mongoose')
+import 'dotenv/config'
+import { Person } from './models/Person.js'
 
-// Provide password and collectionName as arguments to continue the process
-if (process.argv.length < 3) {
-  console.log('give password as argument')
-  process.exit(1)
+export async function showPersons() {
+  const result = await Person.find({})
+  // result.forEach(person => {
+  //   console.log(person)
+  // })
+
+  return result
 }
 
-const password = process.argv[2]
-const url = `mongodb+srv://cm_dev:${password}@cluster0.cmikiy1.mongodb.net/phonebook?appName=Cluster0`
+// This helper function is used to check if a person is already in the phonebook
+// This is used in some of the API routes in the index.js file
+export async function checkPersonInfo(newPerson) {
+  const persons = await showPersons()
+  const person = persons.find(person => person.name === newPerson.name)
 
-mongoose.set('strictQuery', false)
-mongoose.connect(url, { family: 4 })
-
-const listingSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-const Listing = mongoose.model('Listing', listingSchema)
-
-if (process.argv.length === 3) {
-  Listing.find({}).then(
-    result => {
-      console.log("phonebook: ")
-      result.forEach(listing => {
-        console.log(`${listing.name} ${listing.number}`)
-      })
-  if (mongoose.connection) {
-    mongoose.connection.close()
+  if (person) {
+    return updatePhoneNumber(person._id, person.name, newPerson.number)
   }
-})
 
-} else if (process.argv.length === 4) {
-  // Run using "node mongo.js {password} {collectionName}"
-  const name = process.argv[3]
-  const number = process.argv[4]
+  if (newPerson.name === '' || newPerson.number === '') {
+    return Error('missing name or number')
+  }
 
-  const newListing = new Listing({
-    "name": `${name}`,
-    "number": `${number}`
+  return null
+}
+
+export async function createPerson(personName, personNumber) {
+  const newPerson = new Person({
+    name: personName,
+    number: personNumber,
   })
+  return await newPerson.save()
+}
 
-  newListing.save().then(_result => {
-    console.log('listing saved!')
-  })
-  if (mongoose.connection) {
-    mongoose.connection.close()
-  } 
+export async function updatePhoneNumber(id, name, newNumber) {
+  const person = await Person.findByIdAndUpdate(
+    id,
+    { name: name,
+      number: newNumber
+    },
+    { new: true, runValidators: true }
+  )
+  return person
+}
+
+export async function deletePersonById(id) {
+  const deletedPersonDocument = await Person.deleteOne({ _id: id })
+  return deletedPersonDocument
+}
+
+export async function calculateNumberOfEntries() {
+  const result = await Person.find({})
+  return result.length
 }

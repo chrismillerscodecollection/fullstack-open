@@ -2,15 +2,17 @@ import { Delete } from './Delete'
 
 export const List = ({ persons, filter, handleDeletePerson }) => {
   return (
-     <div>
-        {filter}
-        {persons
+    <div>
+      {filter}
+      {
+        persons
           .filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
           .map((person) => (
-            <p key={person.id}>
-              {person.name} : {person.number} <Delete personId={person.id} handleDeletePerson={handleDeletePerson}/>
+            <p key={person._id} id={person._id}>
+              {person.name} : {person.number} <Delete personId={person._id} handleDeletePerson={handleDeletePerson} />
             </p>
-          ))}
-      </div>
+          ))
+      }
+    </div>
   )
 }

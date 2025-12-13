@@ -1,120 +1,129 @@
+import 'dotenv/config'
+import express from 'express'
+import mongoose from 'mongoose'
+import morgan from 'morgan'
+import { Person } from './models/Person.js'
+import { showPersons, checkPersonInfo, createPerson, deletePersonById, calculateNumberOfEntries, updatePhoneNumber } from './mongo.js'
 
-require('dotenv').config()
-const express = require('express')
-const morgan = require('morgan')
 const app = express()
-const mongoose = require('mongoose')
-const Listing = require('./model/Listing.js')
 
-app.use(express.json())
-// app.use(express.static('dist'))
-
-morgan.token('request-body', function (request, response) {
+// A token in Morgan represents a discrete data point that gets extracted from a request/response and inserted into the log output.
+// Each token contributes one piece of information to the overall log entry.
+morgan.token('request-body', function (request) {
   return JSON.stringify(request.body)
 })
 
-app.post('/{*all}', morgan(':method :url :status :response-time ms :request-body'))
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
 
-try {
-  mongoose.connect(process.env.MONGO_DB_URI)
-  console.log("Successfully Connected to MongoDB")
-} catch (error) {
-  console.log("Failed to connect to MongoDB due to ", error)
+  if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
+  }
+
+  next(error)
 }
 
-// function generateId() {
-//   return String(Math.floor(Math.random() * 1000000000) + 1)
-// }
+app.use(express.json())
+app.use(express.static('dist')) // Loads the front-end code
+app.use('/{*all}', morgan(':method :url :status :response-time ms :request-body'))
 
-// function checkPersonInfo(newPerson) {
-//    if (persons.find(person => person.name === newPerson.name)) {
-//     const e =  Error('must be unique')
-//     return e
-//   }
 
-//   if (newPerson.name === '' || newPerson.number === '') {
-//     const e =  Error('missing name or number')
-//     return e
-//   }
+// Connect to MongoDB using mongoose
+const url = process.env.MONGO_DB_URI
 
-//   return null
-// }  
- 
+try {
+  console.log('Connecting to MongoDB...')
+  // 'family: 4' specifies the IP protocol, in this case, IPv4
+  await mongoose.connect(url, { family: 4 })
+} catch (err) {
+  console.error(err.message)
+  process.exit(1)
+} finally {
+  console.log('Connected to MongoDB...')
+}
 
-// app.get('/info', (_request, response) => {
-//   const multilineResponse = `
-//   <div>
-//     <p>Phonebook has info for ${persons.length} people</p> 
-//     <p>${new Date(Date.now()).toString()}</p>
-//   <div>`
-//   response.type('text/html; charset=utf-8')
-//   response.send(multilineResponse)
-// })
+app.get('/info', async (_request, response) => {
+  const numOfPeople = await calculateNumberOfEntries()
+  if (numOfPeople) {
+    response.send(`<p>There are ${numOfPeople} people in the phonebook</p>`)
+  } else {
+    response.status(404).end()
+  }
+})
 
 
 app.get('/api/persons', async (_request, response) => {
-  const peopleFound = await Listing.find({})
-  console.log(peopleFound)
-  
-  if (peopleFound) {
-    response.json(peopleFound)
+  const persons = await showPersons()
+  console.log(persons)
+
+  if (persons) {
+    response.json(persons)
   } else {
     response.status(404).end()
+  }
+})
+
+app.post('/api/persons', async (request, response, next) => {
+  const body = request.body
+
+  const newPerson = {
+    'name': body.name,
+    'number': body.number
+  }
+
+  const e = await checkPersonInfo(newPerson)
+
+  if (e !== null) {
+    response.status(400).json({ error: `${e.message}` })
+  } else {
+    try {
+      const savedPerson = await createPerson(newPerson.name, newPerson.number)
+
+      console.log(`Added a new person: ${savedPerson}`)
+      response.json(savedPerson)
+    } catch (error) {
+      next(error)
+    }
   }
 })
 
 
 app.get('/api/persons/:id', async (request, response) => {
   const id = request.params.id
-  const person = await Listing.findById(`${id}`).exec()
+  const person = await Person.findById(`${id}`)
 
   if (person) {
-    console.log(person)
     response.json(person)
   } else {
     response.status(404).end()
   }
 })
 
-// app.post('/api/persons', (request, response) => {
-//   const body = request.body
-  
-//   const newPerson = {
-//     'id': generateId().toString(),
-//     'name': body.name,
-//     'number': body.number
-//   }
-
-//   e = checkPersonInfo(newPerson)
-
-//   if (e !== null) {
-//     response.status(400).json({error: `${e.message}`})
-//   } else {
-//     persons.concat(newPerson)
-//     response.json(newPerson)
-//   }
-// })
-
-app.delete('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', async (request, response) => {
   const id = request.params.id
-  const filteredPersons = persons.filter(person => person.id !== id)
+  const { name, number } = request.body
 
-  if (filteredPersons) {
+  const updatedPerson = await updatePhoneNumber(id, name, number)
+
+  if (updatedPerson) {
+    response.json(updatedPerson)
+  } else {
+    response.status(404).end()
+  }
+})
+
+app.delete('/api/persons/:id', async (request, response) => {
+  const id = request.params.id
+  const deletedPersonDocument = await deletePersonById({ _id: id })
+
+  if (deletedPersonDocument) {
     response.status(204).end()
   } else {
     response.status(404).end()
   }
 })
 
-
-// app.get('/api/info', (_request, response) => {
-//   const jsonResponse = {
-//     numberOfPeople: calcNumOfPersons(),
-//     dateAndTime: new Date(Date.now()).toString()     
-//   }
-//   response.json(jsonResponse)
-// })
-
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 
