@@ -3,10 +3,10 @@ import { Person } from './models/Person.js'
 
 export async function showPersons() {
   const result = await Person.find({})
-  result.forEach(person => {
-    console.log(person)
-  })
-  
+  // result.forEach(person => {
+  //   console.log(person)
+  // })
+
   return result
 }
 
@@ -14,11 +14,10 @@ export async function showPersons() {
 // This is used in some of the API routes in the index.js file
 export async function checkPersonInfo(newPerson) {
   const persons = await showPersons()
+  const person = persons.find(person => person.name === newPerson.name)
 
-  if (persons.find(person => person.name === newPerson.name)) {
-    let person = person
-    return updatePerson(person._id, newPerson.number)
-    // return Error('must be unique')
+  if (person) {
+    return updatePhoneNumber(person._id, person.name, newPerson.number)
   }
 
   if (newPerson.name === '' || newPerson.number === '') {
@@ -33,27 +32,26 @@ export async function createPerson(personName, personNumber) {
     name: personName,
     number: personNumber,
   })
-  const newPersonDocument =  await newPerson.save()
-  
-  return newPersonDocument
+  return await newPerson.save()
 }
 
-export async function updatePerson(id, number) {
-  const persons = await showPersons()
-  let person = persons.find(person => person._id === id)
-  
-  person = {
-    _id: id,
-    name: person.name,
-    number: number
-  }
-
-  person.save()
-  return `Successfully updated ${person.name} phone number to ${person.number}!`
+export async function updatePhoneNumber(id, name, newNumber) {
+  const person = await Person.findByIdAndUpdate(
+    id,
+    { name: name,
+      number: newNumber
+    },
+    { new: true, runValidators: true }
+  )
+  return person
 }
 
 export async function deletePersonById(id) {
   const deletedPersonDocument = await Person.deleteOne({ _id: id })
-  
   return deletedPersonDocument
+}
+
+export async function calculateNumberOfEntries() {
+  const result = await Person.find({})
+  return result.length
 }

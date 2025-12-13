@@ -37,7 +37,8 @@ const App = () => {
         setNotification({ message: null, type: null });
       }, 5000);
     } catch (error) {
-      console.error(error);
+      console.error(error)
+      setNotification({ message: error.response.data.error, type: 'failure'});
     }
   }
 
@@ -55,7 +56,8 @@ const App = () => {
     // The code for personService is in services/persons.js
     try {
       await personsService.updatePhoneNumber(personId, person.name, number);
-      setPersons(persons.map(currentPerson => currentPerson._id === personId ? person : currentPerson));
+      //setPersons(persons.map(currentPerson => currentPerson._id === personId ? person : currentPerson));
+      setPersons(await personsService.getAll())
       setName("");
       setNumber("");
 

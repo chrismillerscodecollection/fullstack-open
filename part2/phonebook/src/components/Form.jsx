@@ -17,11 +17,12 @@ export const Form = ({
       if (match && numExists) {
         if (window.confirm("The user already has a phone number. Would you like to update it?")) {
           await handleUpdatePhoneNumber(match._id, number)
+          return
         }
       } else if (match) {
         alert(`${name} is already added to the phonebook`)
         return
-      }
+      } 
 
       await handleAddNewPerson(name, number)
     }
