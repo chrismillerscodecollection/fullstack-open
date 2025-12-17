@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Third quarter life guy - Architect and Developer",
+  "author": "Todd Gualandi",
+  "url": "https://toddg.blog.com/",
+  "likes": 0
+}
