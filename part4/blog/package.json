@@ -9,6 +9,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "dev-local-db": "cross-env NODE_ENV=development-local-db node --watch index.js",
     "test": "cross-env NODE_ENV=test node --test",
     "test-log": "cross-env NODE_ENV=test node --test --test-reporter=spec"
   },
@@ -17,6 +18,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "lodash": "^4.17.21",
-    "mongoose": "^9.0.1"
+    "mongoose": "^8.9.2",
+    "supertest": "^7.1.4"
   }
 }

@@ -7,6 +7,7 @@ const blogSchema = mongoose.Schema({
   likes: Number,
 })
 
+// Transform the returned JSON object to modify _id to id and remove __v
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
@@ -15,4 +16,4 @@ blogSchema.set('toJSON', {
   },
 })
 
-module.exports = mongoose.model('Blog', blogSchema)
+module.exports = mongoose.model('Blog', blogSchema) 
