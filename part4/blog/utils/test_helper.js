@@ -1,3 +1,6 @@
+// Create blog records that can be used for tests
+// This test_helper file was created for local testing, not API calls to the MongoDB server. 
+// it was essentially created for building the original tests.
 const blogs = [
   {
     _id: '5a422aa71b54a676234d17f8',
