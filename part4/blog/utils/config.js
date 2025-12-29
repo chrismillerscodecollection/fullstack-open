@@ -12,15 +12,11 @@ switch (ENV) {
     MONGODB_URI = process.env.TEST_MONGODB_URI
     break;
   case 'development':
-    console.log('dev environment variables set for using local db...')
-    MONGODB_URI = process.env.TEST_MONGODB_URI
-    break;
-  case 'development-local-db':
-    console.log('"dev-local-db environment variables set for using local db...')
+    console.log('development environment variables set for using local db...')
     MONGODB_URI = process.env.TEST_MONGODB_URI
     break;
   default:
-    console.log('prod environment variables set...')
+    console.log('production environment variables set...')
     MONGODB_URI = process.env.MONGODB_URI
 }
 

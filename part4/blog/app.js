@@ -7,10 +7,9 @@ const middleware = require('./utils/middleware')
 
 const app = express()
 
-logger.info('connecting to', config.MONGODB_URI)
-
 const connectDB = async () => {
   try {
+    logger.info('connecting to', config.MONGODB_URI)
     const conn = await mongoose.connect(config.MONGODB_URI)
     logger.info(`MongoDB Connected: ${conn.connection.host}`)
   } catch (error) {
@@ -18,8 +17,6 @@ const connectDB = async () => {
     process.exit(1)
   }
 }
-
-connectDB()
 
 app.use(express.json())
 app.use(middleware.requestLogger)
@@ -29,4 +26,4 @@ app.use('/api/blogs', blogRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
-module.exports = app
+module.exports = { app, connectDB }

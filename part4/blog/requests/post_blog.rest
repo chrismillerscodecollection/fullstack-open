@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Third quarter life guy - Architect and Developer",
-  "author": "Todd Gualandi",
-  "url": "https://toddg.blog.com/",
-  "likes": 0
+  "title": "Building Scalable Microservices with Node.js",
+  "author": "Sarah Mitchell",
+  "url": "https://devblog.tech/microservices-nodejs",
+  "likes": 42
 }

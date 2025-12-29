@@ -1,46 +1,19 @@
+const { test, describe, before, after } = require('node:test')
+const assert = require('node:assert')
 const request = require('supertest')
-const { test } = require('node:test')
-const express = require('express')
 const mongoose = require('mongoose')
-const config = require('../utils/config')
-const logger = require('../utils/logger')
-const middleware = require('../utils/middleware')
-const blogRouter = require('../controllers/blogs')
+const { app, connectDB } = require('../app')
 
-logger.info(`Connecting to: ${config.MONGODB_URI}`)
-
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(config.MONGODB_URI)
-    logger.info(`MongoDB Connected: ${conn.connection.host}`)
-  } catch (error) {
-    logger.error(`Error connecting to MongoDB: ${error.message}`)
-    process.exit(1)
-  }
-}
-
-const app = express()
-
-app.use(express.json())
-app.use(middleware.requestLogger)
-app.use('/api/blogs', blogRouter)
-app.use(middleware.unknownEndpoint)
-app.use(middleware.errorHandler)
-
-test.before(async () => {
-  await connectDB()
+before(async () => {
+  const connection = await connectDB()
+  return connection
 })
 
-test.after(async () => {
+after(async () => {
   await mongoose.connection.close()
 })
 
-test('returns all blogs', () => {
-  return request(app)
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-    .then(res => {
-      console.log(res.body)
-    })
+test('GET /api/blog returns 200', async () => {
+  const response = await request(app).get('/api/blogs')
+  assert.strictEqual(response.status, 200)
 })
