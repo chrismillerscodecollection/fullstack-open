@@ -7,10 +7,10 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index.js",
+    "start": "cross-env NODE_ENV=prod node index.js",
     "dev": "cross-env NODE_ENV=development node --watch index.js",
-    "dev-local-db": "cross-env NODE_ENV=development-local-db node --watch index.js",
     "test": "cross-env NODE_ENV=test node --test",
+    "test-only": "cross-env NODE_ENV=test node --test --test-only",
     "test-log": "cross-env NODE_ENV=test node --test --test-reporter=spec"
   },
   "dependencies": {

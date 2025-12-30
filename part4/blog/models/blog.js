@@ -1,10 +1,13 @@
 const mongoose = require('mongoose')
 
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
+const blogSchema = new mongoose.Schema({
+  title: { type: String },
+  author: { type: String },
+  url: {type: String },
+  likes: { 
+    type: Number,
+    default: () => 0
+  }
 })
 
 // Transform the returned JSON object to modify _id to id and remove __v
