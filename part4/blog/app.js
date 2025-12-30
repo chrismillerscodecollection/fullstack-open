@@ -20,6 +20,7 @@ const connectDB = async () => {
 
 app.use(express.json())
 app.use(middleware.requestLogger)
+// app.use(middleware.missingPropHandler)
 
 app.use('/api/blogs', blogRouter)
 

@@ -9,6 +9,13 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+// const missingPropHandler = (request, response, next) => {
+//   const blog = request.body
+//   console.log('missingPropHandler hit')
+//   console.log(blog)
+//   next()
+// }
+
 const unknownEndpoint = (request, response) => {
   console.log('unknownEndpoint middleware hit')
   response.status(404).send({ error: 'unknown endpoint' })

@@ -7,3 +7,12 @@ Content-Type: application/json
   "url": "https://devblog.tech/microservices-nodejs",
   "likes": 42
 }
+###########
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Modern CSS Grid Layouts: A Complete Guide",
+  "author": "Emily Chen",
+  "url": "https://css-weekly.com/grid-layouts-complete'"
+}
