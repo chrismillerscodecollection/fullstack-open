@@ -59,6 +59,9 @@ describe('post requests to mongoDB', () => {
     assert.ok(response.body.id)
   })
 
+  // The schema for 'blog' provides a default value of 0 for the 'likes' property
+  // This tests validates that the default value is added when it's not provided
+  // by the POST request
   test('handles missing property - "likes"', async () => {
     const response = await request(app)
       .post('/api/blogs')
