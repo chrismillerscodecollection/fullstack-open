@@ -38,7 +38,7 @@ describe('get requests to mongoDB', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    assert.ok(response.body[0].id)
+    assert.ok(response.body[0].id) // assert.ok() performs boolean validation
   })
 })
 
@@ -71,15 +71,33 @@ describe('post requests to mongoDB', () => {
         url: 'https://css-weekly.com/grid-layouts-complete',
       })
       .expect(201)
-     
-      assert.strictEqual(response.body.likes, 0)
+
+    assert.strictEqual(response.body.likes, 0)
+  })
+  
+  // 'title' is a required property in the 'blog' schema
+  // If a required property is not provided - we expect a response code of 400
+  test('handles missing property - "title"', async () => {
+    const response = await request(app)
+      .post('/api/blogs')
+      .send({
+        author: 'Emily Chen',
+        url: 'https://css-weekly.com/grid-layouts-complete',
+        likes: 4
+      })
+      .expect(400)
+  })
+
+   // 'url' is a required property in the 'blog' schema
+  // If a required property is not provided - we expect a response code of 400
+  test('handles missing property - "url"', async () => {
+    const response = await request(app)
+      .post('/api/blogs')
+      .send({
+        title: 'Modern CSS Grid Layouts: A Complete Guide',
+        author: 'Emily Chen',
+        likes: 10
+      })
+      .expect(400)
   })
 })
-
-
-// 4.12*: Blog List tests, step 5
-// Write tests related to creating new blogs via the /api/blogs endpoint, 
-// that verify that if the title or url properties are missing from the request data, 
-// the backend responds to the request with the status code 400 Bad Request.
-
-// Make the required changes to the code so that it passes the test.
