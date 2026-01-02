@@ -4,6 +4,7 @@ const config = require('./utils/config')
 const logger = require('./utils/logger')
 const blogRouter = require('./controllers/blogs')
 const middleware = require('./utils/middleware')
+const usersRouter = require('./controllers/users')
 
 const app = express()
 
@@ -20,8 +21,8 @@ const connectDB = async () => {
 
 app.use(express.json())
 app.use(middleware.requestLogger)
-// app.use(middleware.missingPropHandler)
 
+app.use('/api/users', usersRouter)
 app.use('/api/blogs', blogRouter)
 
 app.use(middleware.unknownEndpoint)
