@@ -2,10 +2,10 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Building Scalable Microservices with Node.js",
-  "author": "Sarah Mitchell",
-  "url": "https://devblog.tech/microservices-nodejs",
-  "likes": 42
+  "title": "TypeScript Best Practices and Advanced Types",
+  "author": "Christopher Miller",
+  "url": "https://typescript-guide.dev/advanced-types",
+  "likes": 100
 }
 ###########
 POST http://localhost:3001/api/blogs
@@ -15,4 +15,14 @@ Content-Type: application/json
   "title": "Modern CSS Grid Layouts: A Complete Guide",
   "author": "Emily Chen",
   "url": "https://css-weekly.com/grid-layouts-complete'"
+}
+###########
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Building Scalable Microservices with Node.js",
+  "author": "Sarah Mitchell",
+  "url": "https://devblog.tech/microservices-nodejs",
+  "likes": 42
 }
