@@ -26,7 +26,8 @@ describe('get requests to mongoDB', () => {
       author: 'Sarah Mitchell',
       url: 'https://devblog.tech/microservices-nodejs',
       likes: 42,
-      id: '6951c854bc953a5ef435215a'
+      id: '6951c854bc953a5ef435215a',
+      users: []
     }
 
     assert.deepStrictEqual(response.body[0], blog)
@@ -68,9 +69,62 @@ describe('post requests to mongoDB', () => {
         url: 'https://css-weekly.com/grid-layouts-complete',
       })
       .expect(201)
-     
-      assert.strictEqual(response.body.likes, 0)
+
+    assert.strictEqual(response.body.likes, 0)
   })
+
+  test.only('username is required', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        name: "Christopher Miller",
+        password: "fullstackopencourse"
+      })
+      .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'username is missing' })
+  })
+
+  test.only('username must be greater than 3 characters in length', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        username: "cm",
+        name: "Christopher Miller",
+        password: "fullstackopencourse"
+      })
+      .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'username must be 3 or more characters in length' })
+  })
+
+
+  test.only('password is required', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        username: "cmdev",
+        name: "Christopher Miller",
+      })
+      .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'password is missing' })
+  })
+
+  test.only('password must be greater than 3 characters in length', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        username: "cmdev",
+        name: "Christopher Miller",
+        password: "fo"
+      })
+      .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'password must be 3 or more characters in length' })
+  })
+
+
 })
 
 
@@ -80,3 +134,7 @@ describe('post requests to mongoDB', () => {
 // the backend responds to the request with the status code 400 Bad Request.
 
 // Make the required changes to the code so that it passes the test.
+
+// 4.15: mplement tests that ensure invalid users are not created and 
+// that an invalid add user operation returns a suitable status code and error message.
+

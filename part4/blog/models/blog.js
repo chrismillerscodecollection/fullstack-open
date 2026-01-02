@@ -7,7 +7,13 @@ const blogSchema = new mongoose.Schema({
   likes: { 
     type: Number,
     default: () => 0
-  }
+  },
+  users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ]
 })
 
 // Transform the returned JSON object to modify _id to id and remove __v
