@@ -26,7 +26,8 @@ describe('get requests to mongoDB', () => {
       author: 'Sarah Mitchell',
       url: 'https://devblog.tech/microservices-nodejs',
       likes: 42,
-      id: '6951c854bc953a5ef435215a'
+      id: '6951c854bc953a5ef435215a',
+      users: []
     }
 
     assert.deepStrictEqual(response.body[0], blog)
@@ -38,7 +39,7 @@ describe('get requests to mongoDB', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    assert.ok(response.body[0].id) // assert.ok() performs boolean validation
+    assert.ok(response.body[0].id)
   })
 })
 
@@ -59,9 +60,6 @@ describe('post requests to mongoDB', () => {
     assert.ok(response.body.id)
   })
 
-  // The schema for 'blog' provides a default value of 0 for the 'likes' property
-  // This tests validates that the default value is added when it's not provided
-  // by the POST request
   test('handles missing property - "likes"', async () => {
     const response = await request(app)
       .post('/api/blogs')
@@ -74,30 +72,69 @@ describe('post requests to mongoDB', () => {
 
     assert.strictEqual(response.body.likes, 0)
   })
-  
-  // 'title' is a required property in the 'blog' schema
-  // If a required property is not provided - we expect a response code of 400
-  test('handles missing property - "title"', async () => {
+
+  test.only('username is required', async () => {
     const response = await request(app)
-      .post('/api/blogs')
+      .post('/api/users')
       .send({
-        author: 'Emily Chen',
-        url: 'https://css-weekly.com/grid-layouts-complete',
-        likes: 4
+        name: "Christopher Miller",
+        password: "fullstackopencourse"
       })
       .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'username is missing' })
   })
 
-   // 'url' is a required property in the 'blog' schema
-  // If a required property is not provided - we expect a response code of 400
-  test('handles missing property - "url"', async () => {
+  test.only('username must be greater than 3 characters in length', async () => {
     const response = await request(app)
-      .post('/api/blogs')
+      .post('/api/users')
       .send({
-        title: 'Modern CSS Grid Layouts: A Complete Guide',
-        author: 'Emily Chen',
-        likes: 10
+        username: "cm",
+        name: "Christopher Miller",
+        password: "fullstackopencourse"
       })
       .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'username must be 3 or more characters in length' })
   })
+
+
+  test.only('password is required', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        username: "cmdev",
+        name: "Christopher Miller",
+      })
+      .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'password is missing' })
+  })
+
+  test.only('password must be greater than 3 characters in length', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        username: "cmdev",
+        name: "Christopher Miller",
+        password: "fo"
+      })
+      .expect(400)
+
+    assert.deepStrictEqual(response.body, { error: 'password must be 3 or more characters in length' })
+  })
+
+
 })
+
+
+// 4.12*: Blog List tests, step 5
+// Write tests related to creating new blogs via the /api/blogs endpoint, 
+// that verify that if the title or url properties are missing from the request data, 
+// the backend responds to the request with the status code 400 Bad Request.
+
+// Make the required changes to the code so that it passes the test.
+
+// 4.15: mplement tests that ensure invalid users are not created and 
+// that an invalid add user operation returns a suitable status code and error message.
+

@@ -1,0 +1,36 @@
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "root",
+    "name": "Superuser",
+    "password": "salainen"
+}
+
+#####
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "cmdev",
+    "name": "Christopher Miller",
+    "password": "fullstackopencourse"
+}
+
+##### Test missing username
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "name": "Christopher Miller",
+    "password": "fullstackopencourse"
+}
+
+##### Test missing password
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "cmdev",
+    "name": "Christopher Miller"
+}
