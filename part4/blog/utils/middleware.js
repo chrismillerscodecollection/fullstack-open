@@ -6,8 +6,6 @@ const requestLogger = (request, response, next) => {
   logger.info('Body:  ', request.body)
   logger.info('---')
 
-  logger.info(request)
-
   next()
 }
 
@@ -27,7 +25,6 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  console.log('errorHandler middleware hit')
   logger.error(error.message)
 
   if (error.name === 'CastError') {
