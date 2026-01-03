@@ -52,11 +52,14 @@ blogRouter.delete('/:id', async(request, response) => {
 
   const blog = await Blog.findById(request.params.id) // locate the blog by its id
   
+  if (!blog) {
+    return response.status(400).json({ error: 'blog not found'})
+  }
   if (blog.users.toString() === user._id.toString()) { // convert both user ids to string to compare
     await blog.deleteOne() // delete blog
     response.status(204).end() // send successful response
   } else {
-    return response.status(400).json({ error: 'logged in user is not blog author'})
+    return response.status(403).json({ error: 'logged in user is not blog author'})
   }
  
 })
