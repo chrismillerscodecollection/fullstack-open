@@ -1,11 +1,12 @@
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
-  console.log('requestLogger middleware hit')
   logger.info('Method:', request.method)
   logger.info('Path:  ', request.path)
   logger.info('Body:  ', request.body)
   logger.info('---')
+
+  logger.info(request)
 
   next()
 }
@@ -13,6 +14,16 @@ const requestLogger = (request, response, next) => {
 const unknownEndpoint = (request, response) => {
   console.log('unknownEndpoint middleware hit')
   response.status(404).send({ error: 'unknown endpoint' })
+}
+
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '') // removes prefix - returns token only
+  }
+
+  next()
 }
 
 const errorHandler = (error, request, response, next) => {
@@ -36,5 +47,6 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
   requestLogger,
   unknownEndpoint,
+  tokenExtractor,
   errorHandler,
 }
