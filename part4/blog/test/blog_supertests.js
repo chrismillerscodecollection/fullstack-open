@@ -49,6 +49,7 @@ describe('post requests to mongoDB', () => {
   test('post /api/blogs returns 201 + adds new blog post', async () => {
     const response = await request(app)
       .post('/api/blogs')
+      .set('Authorization', process.env.TEST_TOKEN)
       .send({
         title: 'Understanding React Hooks in Depth',
         author: 'James Anderson',
@@ -63,6 +64,7 @@ describe('post requests to mongoDB', () => {
   test('handles missing property - "likes"', async () => {
     const response = await request(app)
       .post('/api/blogs')
+      .set('Authorization', process.env.TEST_TOKEN)
       .send({
         title: 'Modern CSS Grid Layouts: A Complete Guide',
         author: 'Emily Chen',
@@ -73,7 +75,7 @@ describe('post requests to mongoDB', () => {
     assert.strictEqual(response.body.likes, 0)
   })
 
-  test.only('username is required', async () => {
+  test('username is required', async () => {
     const response = await request(app)
       .post('/api/users')
       .send({
@@ -85,7 +87,7 @@ describe('post requests to mongoDB', () => {
     assert.deepStrictEqual(response.body, { error: 'username is missing' })
   })
 
-  test.only('username must be greater than 3 characters in length', async () => {
+  test('username must be greater than 3 characters in length', async () => {
     const response = await request(app)
       .post('/api/users')
       .send({
@@ -98,7 +100,7 @@ describe('post requests to mongoDB', () => {
     assert.deepStrictEqual(response.body, { error: 'username must be 3 or more characters in length' })
   })
 
-  test.only('password is required', async () => {
+  test('password is required', async () => {
     const response = await request(app)
       .post('/api/users')
       .send({
@@ -110,7 +112,7 @@ describe('post requests to mongoDB', () => {
     assert.deepStrictEqual(response.body, { error: 'password is missing' })
   })
 
-  test.only('password must be greater than 3 characters in length', async () => {
+  test('password must be greater than 3 characters in length', async () => {
     const response = await request(app)
       .post('/api/users')
       .send({
@@ -123,5 +125,17 @@ describe('post requests to mongoDB', () => {
     assert.deepStrictEqual(response.body, { error: 'password must be 3 or more characters in length' })
   })
 
+  test('token is required', async () => {
+    const response = await request(app)
+      .post('/api/blogs')
+      .send({
+        title: 'Understanding React Hooks in Depth',
+        author: 'Christopher Miller',
+        url: 'https://frontend-masters.io/react-hooks-guide',
+        likes: 128,
+      })
+      .expect(401)
 
+    assert.deepStrictEqual(response.body, { error: 'invalid token' })
+  })
 })

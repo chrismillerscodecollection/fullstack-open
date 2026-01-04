@@ -27,15 +27,10 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
-  console.log('middleware userExtractor hit')
-  const token = request.token
-  console.log('...token', token)
-
-
-  const decodedToken = jwt.verify(token, process.env.SECRET)
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
   if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
+    return response.status(401).json({ error: 'invalid token' })
   }
   
   const user = await User.findById(decodedToken.id)
@@ -63,7 +58,7 @@ const errorHandler = (error, request, response, next) => {
     error.message.includes('E11000 duplicate key error')) {
     return response.status(400).json({ error: 'expect `username` to be unique' })
   } else if (error.name === 'JsonWebTokenError') {
-    return response.status(401).json({ error: 'token invalid' })
+    return response.status(401).json({ error: 'invalid token' })
   }
 
   next(error)
