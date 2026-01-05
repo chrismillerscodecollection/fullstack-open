@@ -12,16 +12,23 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    const getBlogs = async () => {
+      try {
+        const response = await blogService.getAll()
+        setBlogs(response)
+      } catch(error) {
+        console.error('Unable to get all blogs due to: ', error)
+      }
+    }
+
+    getBlogs()
   }, [])
 
   const handleLogin = async event => {
     event.preventDefault()
 
     try {
-      console.log('logging in with', username, password)
+      console.log('logging in user:', username)
       const user = await loginService.login({ username, password })
       setUser(user)
       setUsername('')
@@ -64,6 +71,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to the application</h2>
+        <Notification message={errorMessage} />
         {loginForm()}
       </div>
     )
