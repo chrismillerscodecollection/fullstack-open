@@ -16,8 +16,11 @@ const App = () => {
       try {
         const response = await blogService.getAll()
         setBlogs(response)
-      } catch(error) {
-        console.error('Unable to get all blogs due to: ', error)
+      } catch (error) {
+        setErrorMessage(`Unable to get blogs due to: ${error}`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       }
     }
 
@@ -28,13 +31,13 @@ const App = () => {
     event.preventDefault()
 
     try {
-      console.log('logging in user:', username)
+      console.log('Logging in user:', username)
       const user = await loginService.login({ username, password })
       setUser(user)
       setUsername('')
       setPassword('')
     } catch {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
