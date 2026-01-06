@@ -6,7 +6,13 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState({
+    title: '',
+    author: '',
+    url: ''
+  })
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -40,16 +46,17 @@ const App = () => {
     event.preventDefault()
 
     try {
-      console.log('Logging in user:', username)
       const user = await loginService.login({ username, password })
+      
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
+
       setUser(user)
-      console.log('Logging in user:', user)
       setUsername('')
       setPassword('')
+
     } catch {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
@@ -60,18 +67,45 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      window.localStorage.removeItem(
-        'loggedBlogAppUser', JSON.stringify(user)
-      )
-      setUser('')
+      setUser(null)
       setUsername('')
       setPassword('')
-    } catch(error) {
+      blogService.setToken(null)
+      window.localStorage.removeItem('loggedBlogAppUser')
+    } catch (error) {
       setErrorMessage(`Unable to logout the user due to ${error}`)
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
+  }
+
+  const addNewBlog = async (event) => {
+    event.preventDefault()
+
+    try {
+      const blog = {
+        title: newBlog.title,
+        author: newBlog.author,
+        url: newBlog.url
+      }
+
+      const response = await blogService.create(blog)
+      console.log(response)
+      setBlogs(blogs.concat(response))
+      setSuccessMessage(`${response.title} brought to you by ${response.author} added`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch (error) {
+      setErrorMessage(`Unable to create a new blog due to: ${error}`)
+    }
+
+    setNewBlog({
+      title: '',
+      author: '',
+      url: ''
+    })
   }
 
   const loginForm = () => (
@@ -100,9 +134,40 @@ const App = () => {
     </form>
   )
 
-  const logoutForm = () => (
-    <form onSubmit={handleLogout}>
-      <button type="submit">logout</button>
+  const blogForm = () => (
+    <form onSubmit={addNewBlog}>
+      <h2>create new</h2>
+      <p>
+        <label>
+          title:
+          <input
+            type="text"
+            value={newBlog.title}
+            onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
+          />
+        </label>
+      </p>
+      <p>
+        <label>
+          author:
+          <input
+            type="text"
+            value={newBlog.author}
+            onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
+          />
+        </label>
+      </p>
+      <p>
+        <label>
+          url:
+          <input
+            type="text"
+            value={newBlog.url}
+            onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
+          />
+        </label>
+      </p>
+      <button type="submit">create</button>
     </form>
   )
 
@@ -118,12 +183,22 @@ const App = () => {
 
   return (
     <div>
-      <p>{user.name} logged in</p>
-      {logoutForm()}
-      <h2>blogs</h2>
-      <Notification message={errorMessage} />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {!user && loginForm()}
+      {user && (
+        <main>
+          <h2>blogs</h2>
+          <div>
+            <p>{user.name} logged in
+              <button onClick={handleLogout}>logout</button>
+            </p>
+            <Notification message={errorMessage} />
+            <Notification message={successMessage} />
+            {blogForm()}
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} />
+            )}
+          </div>
+        </main>
       )}
     </div>
   )
