@@ -17,11 +17,11 @@ const Togglable = (props) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+        <button style={{marginBottom: 10}} onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
+        <button style={{marginBottom: 10}} onClick={toggleVisibility}>cancel</button>
       </div>
     </div>
   )
