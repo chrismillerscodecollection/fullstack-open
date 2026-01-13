@@ -3,7 +3,6 @@ const BlogForm = (
   newBlog,
   handleSetNewBlog}
 ) => {
-  console.log('newBlog:', newBlog) 
   return (
     <form onSubmit={handleAddNewBlog}>
       <h2>create new</h2>
