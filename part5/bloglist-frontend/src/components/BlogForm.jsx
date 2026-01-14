@@ -1,7 +1,9 @@
 const BlogForm = (
-  {handleAddNewBlog,
-  newBlog,
-  handleSetNewBlog}
+  {
+    handleAddNewBlog,
+    newBlog,
+    handleSetNewBlog
+  }
 ) => {
   return (
     <form onSubmit={handleAddNewBlog}>
