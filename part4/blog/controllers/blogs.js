@@ -26,7 +26,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   response.status(201).json(result) 
 })
 
-blogsRouter.post('/:id', async (request, response) => {
+blogsRouter.patch('/:id', async (request, response) => {
   const id  = request.params.id
   const blog = await Blog.findById(id)
 
