@@ -26,6 +26,19 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   response.status(201).json(result) 
 })
 
+blogsRouter.post('/:id', async (request, response) => {
+  const id  = request.params.id
+  const blog = await Blog.findById(id)
+
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found'})
+  }
+  blog.likes = blog.likes + 1
+  const updatedBlog = await blog.save()
+
+  response.status(200).json(updatedBlog)
+})
+
 blogsRouter.delete('/:id', userExtractor, async(request, response) => {
   const user = request.user
 

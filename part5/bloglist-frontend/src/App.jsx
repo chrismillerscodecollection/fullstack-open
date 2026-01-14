@@ -117,6 +117,15 @@ const App = () => {
     })
   }
 
+
+  const handleBlogUpdate = (updatedBlog) => {                                                                     
+    setBlogs(prevBlogs => prevBlogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))                                           
+  }
+
+  const handleBlogError = (error) => {
+    showNotification('error', `Unable to update blog due to ${error}`)
+  }
+  
   const blogForm = () => (
     <Togglable buttonLabel="create new blog">
       <BlogForm
@@ -150,13 +159,12 @@ const App = () => {
             <Notification type={notification.type} message={notification.message} />
             {blogForm()}
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} onUpdate={handleBlogUpdate} onError={handleBlogError}/>
             )}
           </div>
         </main>
       )}
     </div>
-  )
-}
+  )}
 
 export default App
