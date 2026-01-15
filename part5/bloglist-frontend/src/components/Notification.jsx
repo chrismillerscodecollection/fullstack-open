@@ -1,5 +1,4 @@
 const Notification = ({ type, message }) => {
-  
   switch (type) {
     case '':
       return ''

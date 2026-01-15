@@ -12,6 +12,11 @@ const getAll = async () => {
   return response.data
 }
 
+const getBlogCreator = async (userId) => {
+  const response = await axios.get(`${baseUrl}/${userId}`)
+  return response.data
+}
+
 const create = async newObject => {
   const config = {
     headers: { Authorization: token }
@@ -26,4 +31,4 @@ const update = async updatedObject => {
   return response.data
 }
 
-export default { getAll, create, setToken, update }
+export default { getAll, getBlogCreator, create, setToken, update }

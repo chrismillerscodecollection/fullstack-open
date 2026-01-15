@@ -5,7 +5,7 @@ const Blog = ({ blog, onUpdate, onError }) => {
 
   const [showDetails, setShowDetails] = useState(false)
 
-  const handleShowDetails = () => setShowDetails(!showDetails)  
+  const handleShowDetails = () => setShowDetails(!showDetails)
 
   const handleLikeButton = async (blog) => {
     try {
@@ -25,40 +25,22 @@ const Blog = ({ blog, onUpdate, onError }) => {
     marginBottom: 5
   }
 
-  const tableHeadingStyle = {
-    textAlign: 'left'
-  }
-
-  const tableDataStyle = {
-    paddingLeft: 10
-  }
-
   return (
-    <div>
-      {!showDetails && (
-        <div style={blogStyle}>
-          <tr>
-            <th style={tableHeadingStyle}>Title</th>
-            <td style={tableDataStyle}>{blog.title} <button onClick={handleShowDetails}>{showDetails ? "hide" : "view"}</button></td>
-          </tr>
-        </div>
-
-      )}
-
+    <div style={blogStyle}>
+      <div>
+        {blog.title} by {blog.author}
+        <button onClick={handleShowDetails}>
+          {showDetails ? "hide" : "view"}
+        </button>
+      </div>
       {showDetails && (
-        <div style={blogStyle}>
-          <tr>
-            <th style={tableHeadingStyle}>Title</th>
-            <td style={tableDataStyle}>{blog.title} <button onClick={handleShowDetails}>{showDetails ? "hide" : "view"}</button></td>
-          </tr>
-          <tr>
-            <th style={tableHeadingStyle}>Author</th>
-            <td style={tableDataStyle}>{blog.author}</td>
-          </tr>
-          <tr>
-            <th style={tableHeadingStyle}>Likes</th>
-            <td style={tableDataStyle}>{blog.likes} <button onClick={() => handleLikeButton(blog)}>like</button></td>
-          </tr>
+        <div>
+          <div>{blog.url}</div>
+          <div>
+            likes {blog.likes}
+            <button onClick={() => handleLikeButton(blog)}>like</button>
+          </div>
+          {blog.users[0].name}
         </div>
       )}
     </div>

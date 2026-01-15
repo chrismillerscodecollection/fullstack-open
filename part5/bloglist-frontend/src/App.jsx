@@ -145,6 +145,9 @@ const App = () => {
     )
   }
 
+  // Sort blogs before rendering them
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
   return (
     <div>
       {!user && loginForm()}
@@ -157,7 +160,7 @@ const App = () => {
             </p>
             <Notification type={notification.type} message={notification.message} />
             {blogForm()}
-            {blogs.map(blog =>
+            {sortedBlogs.map(blog =>
               <Blog key={blog.id} blog={blog} onUpdate={handleBlogUpdate} onError={handleBlogError}/>
             )}
           </div>
