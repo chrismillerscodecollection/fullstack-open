@@ -22,11 +22,7 @@ const create = async newObject => {
 }
 
 const update = async updatedObject => {
-  const config = {
-    headers: { Authorization: token }
-  }
-
-  const response = await axios.post(`${baseUrl}/${updatedObject.id}`, updatedObject, config)
+  const response = await axios.patch(`${baseUrl}/${updatedObject.id}`, updatedObject)
   return response.data
 }
 

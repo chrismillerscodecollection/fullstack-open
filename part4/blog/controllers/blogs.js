@@ -26,9 +26,9 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   response.status(201).json(result) 
 })
 
-blogsRouter.post('/:id', async (request, response) => {
+blogsRouter.patch('/:id', async (request, response) => {
   const id  = request.params.id
-  const blog = await Blog.findById(id)
+  const blog = await Blog.findById(id).populate('users')
 
   if (!blog) {
     return response.status(404).json({ error: 'blog not found'})
@@ -45,8 +45,9 @@ blogsRouter.delete('/:id', userExtractor, async(request, response) => {
   const blog = await Blog.findById(request.params.id) // locate the blog by its id
   
   if (!blog) {
-    return response.status(400).json({ error: 'blog not found'})
+    return response.status(404).json({ error: 'blog not found'})
   }
+
   if (blog.users.toString() === user._id.toString()) { // convert both user ids to string to compare
     await blog.deleteOne() // delete blog
     response.status(204).end() // send successful response
