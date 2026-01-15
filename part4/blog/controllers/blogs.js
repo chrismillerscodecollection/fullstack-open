@@ -45,7 +45,7 @@ blogsRouter.delete('/:id', userExtractor, async(request, response) => {
   const blog = await Blog.findById(request.params.id) // locate the blog by its id
   
   if (!blog) {
-    return response.status(400).json({ error: 'blog not found'})
+    return response.status(404).json({ error: 'blog not found'})
   }
 
   if (blog.users.toString() === user._id.toString()) { // convert both user ids to string to compare
