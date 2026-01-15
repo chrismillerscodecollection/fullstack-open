@@ -40,7 +40,7 @@ const Blog = ({ blog, onUpdate, onError }) => {
             likes {blog.likes}
             <button onClick={() => handleLikeButton(blog)}>like</button>
           </div>
-          {blog.users[0].name}
+          {blog.users?.[0]?.name}
         </div>
       )}
     </div>
