@@ -23,6 +23,7 @@ const App = () => {
     const getBlogs = async () => {
       try {
         const response = await blogService.getAll()
+        console.log(response)
         setBlogs(response)
       } catch (error) {
         showNotification('error', `Unable to get blogs due to: ${error}`)
@@ -117,56 +118,62 @@ const App = () => {
     })
   }
 
-  const handleBlogUpdate = (updatedBlog) => {                                                                     
-    setBlogs(prevBlogs => prevBlogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))                                           
+  const handleBlogUpdate = (updatedBlog) => {
+    setBlogs(prevBlogs => prevBlogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
   }
 
   const handleBlogError = (error) => {
     showNotification('error', `Unable to update blog due to ${error}`)
   }
-  
-  const blogForm = () => (
-    <Togglable buttonLabel="create new blog">
-      <BlogForm
-        handleAddNewBlog={addNewBlog}
-        newBlog={newBlog}
-        handleSetNewBlog={setNewBlog}
-      />
-    </Togglable>
-  )
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to the application</h2>
-        <Notification type={notification.type} message={notification.message} />
-        {loginForm()}
-      </div>
-    )
+  const handleBlogRemoval = async (blog) => {
+    console.log('blog removal gang shit hit')
+    console.log('blog:', blog)
+    await blogService.deleteBlog(blog)
   }
 
-  // Sort blogs before rendering them
-  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+const blogForm = () => (
+  <Togglable buttonLabel="create new blog">
+    <BlogForm
+      handleAddNewBlog={addNewBlog}
+      newBlog={newBlog}
+      handleSetNewBlog={setNewBlog}
+    />
+  </Togglable>
+)
 
+if (user === null) {
   return (
     <div>
-      {!user && loginForm()}
-      {user && (
-        <main>
-          <h2>blogs</h2>
-          <div>
-            <p>{user.name} logged in
-              <button onClick={handleLogout} style={{ marginLeft: '10px' }}>logout</button>
-            </p>
-            <Notification type={notification.type} message={notification.message} />
-            {blogForm()}
-            {sortedBlogs.map(blog =>
-              <Blog key={blog.id} blog={blog} onUpdate={handleBlogUpdate} onError={handleBlogError}/>
-            )}
-          </div>
-        </main>
-      )}
+      <h2>Log in to the application</h2>
+      <Notification type={notification.type} message={notification.message} />
+      {loginForm()}
     </div>
-  )}
+  )
+}
+
+// Sort blogs before rendering them
+const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
+return (
+  <div>
+    {!user && loginForm()}
+    {user && (
+      <main>
+        <h2>blogs</h2>
+        <div>
+          <p>{user.name} logged in
+            <button onClick={handleLogout} style={{ marginLeft: '10px' }}>logout</button>
+          </p>
+          <Notification type={notification.type} message={notification.message} />
+          {blogForm()}
+          {sortedBlogs.map(blog =>
+            <Blog key={blog.id} blog={blog} onUpdate={handleBlogUpdate} onError={handleBlogError} onRemove={handleBlogRemoval} />
+          )}
+        </div>
+      </main>
+    )}
+  </div>
+)}
 
 export default App

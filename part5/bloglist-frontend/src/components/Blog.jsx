@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, onUpdate, onError }) => {
-
+const Blog = ({ blog, onUpdate, onError, onRemove }) => {
   const [showDetails, setShowDetails] = useState(false)
-
   const handleShowDetails = () => setShowDetails(!showDetails)
 
   const handleLikeButton = async (blog) => {
@@ -15,6 +13,14 @@ const Blog = ({ blog, onUpdate, onError }) => {
     } catch (error) {
       onError(error)
     }
+  }
+
+  const handleRemoveButton = async (blog) => {
+    const ok = window.confirm(`delete "${blog.title}`)
+    if (!ok) return // if user selects cancel - exit the function
+    
+    console.log('handleRemoveButton tech hit ', blog)
+    onRemove(blog)
   }
 
   const blogStyle = {
@@ -28,6 +34,7 @@ const Blog = ({ blog, onUpdate, onError }) => {
   return (
     <div style={blogStyle}>
       <div>
+        <div style={{ display: 'none' }}>{blog.id}</div>
         {blog.title} by {blog.author}
         <button onClick={handleShowDetails}>
           {showDetails ? "hide" : "view"}
@@ -38,10 +45,12 @@ const Blog = ({ blog, onUpdate, onError }) => {
           <div>{blog.url}</div>
           <div>
             likes {blog.likes}
-            <button onClick={() => handleLikeButton(blog)}>like</button>
+            <button onClick={() => handleLikeButton(blog.id)}>like</button>
           </div>
-          {blog.users?.[0]?.name}
+          <div>{blog.users?.[0]?.name}</div>
+           <div><button onClick={() => handleRemoveButton(blog)}>remove</button></div>
         </div>
+       
       )}
     </div>
   )

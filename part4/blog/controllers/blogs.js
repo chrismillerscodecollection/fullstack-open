@@ -40,6 +40,7 @@ blogsRouter.patch('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', userExtractor, async(request, response) => {
+  console.log('request', request)
   const user = request.user
 
   const blog = await Blog.findById(request.params.id) // locate the blog by its id
@@ -50,6 +51,14 @@ blogsRouter.delete('/:id', userExtractor, async(request, response) => {
 
   if (blog.users.toString() === user._id.toString()) { // convert both user ids to string to compare
     await blog.deleteOne() // delete blog
+    
+    // pull the blog from the users record
+    await User.findByIdAndUpdate(
+      console.log('hit findByIdAndUpdate type tech'),
+      user.id,
+      { $pull: { blogs: blog.id } },
+      { new: true }
+    )
     response.status(204).end() // send successful response
   } else {
     return response.status(403).json({ error: 'logged in user is not blog author'})
